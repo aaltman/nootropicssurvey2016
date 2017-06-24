@@ -25,7 +25,7 @@ print("Scaling the values.\n")
 X = scale(X)
 
 print("Computing PCA.\n")
-pca = PCA(n_components=10)
+pca = PCA(n_components=5)
 print(str(pca))
 
 print("Fitting PCA to scaled values.\n")
@@ -36,6 +36,10 @@ print(str(X))
 var= pca.explained_variance_ratio_
 
 #Cumulative Variance explains
-var1=np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
+#var1=np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
 
-print(str(var1))
+print(str(var))
+
+# Write results out
+pd.DataFrame(pca.components_).to_csv('principal_components.csv')
+pd.DataFrame(var).to_csv('explained_variance_ratios.csv')
