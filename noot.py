@@ -10,8 +10,11 @@ from sklearn.preprocessing import scale
 print("Loading dataset.")
 data = pd.read_csv('data.csv')
 
+print("Filling zeroes with means.")
+data_zero_corrected = data.replace(0,data.mean())
+
 print("Filling empty cells by columnwise average.")
-data_filled = data.fillna(data.mean())
+data_filled = data_zero_corrected.fillna(data_zero_corrected.mean())
 #for colname, series in data.iteritems():
 #	series.fillna(series.mean, inplace=True)
 #data.apply(lambda x: x.fillna(x.mean(), inplace=True),axis=0)
@@ -25,7 +28,7 @@ print("Scaling the values.\n")
 X = scale(X)
 
 print("Computing PCA.\n")
-pca = PCA(n_components=5)
+pca = PCA(n_components=10)
 print(str(pca))
 
 print("Fitting PCA to scaled values.\n")
@@ -43,3 +46,15 @@ print(str(var))
 # Write results out
 pd.DataFrame(pca.components_).to_csv('principal_components.csv')
 pd.DataFrame(var).to_csv('explained_variance_ratios.csv')
+
+# Snip out all non-rating columns - no age, sex, or mental illness.
+X_sliced = scale(X[5:,:])
+print("Second PCA ignoring population statistics.  Raw values:")
+print(str(X_sliced))
+
+pca_sliced = PCA(n_components=10)
+print(str(pca_sliced))
+pca_sliced.fit(X_sliced)
+print(str(X_sliced))
+pd.DataFrame(pca_sliced.components_).to_csv('sliced_principal_components.csv')
+pd.DataFrame(pca.explained_variance_ratio_).to_csv('sliced_explained_variance_ratios.csv')
